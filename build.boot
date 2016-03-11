@@ -21,6 +21,13 @@
   '[crisptrutski.boot-cljs-test  :refer [test-cljs]]
   '[pandeiro.boot-http    :refer [serve]])
 
+(defn delete-recursively [fname]
+  (let [func (fn [func f]
+               (when (.isDirectory f)
+                 (doseq [f2 (.listFiles f)]
+                   (func func f2)))
+               (clojure.java.io/delete-file f))]
+    (func func (clojure.java.io/file fname))))
 
 (deftask dev []
   (comp (serve)
@@ -29,9 +36,11 @@
         (cljs-repl)
         (cljs :source-map true :optimizations :none)))
 
-(deftask build []
-  (cljs :optimizations :advanced))
 
+(deftask release []
+  (comp
+   (cljs :optimizations :advanced)
+   (target)))
 
 (deftask testing []
   (merge-env! :source-paths #{"test"})

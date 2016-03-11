@@ -1,0 +1,31 @@
+/* workaround for refresh issues in webkit-based browsers */
+@-webkit-keyframes androidBugfix {from { padding: 0; } to { padding: 0; }}
+body { -webkit-animation: androidBugfix infinite 1s; }
+/* end workaround */
+
+.app {
+  width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.app .header {
+  text-align: center;
+}
+
+.app .result {
+  width: 100%;
+  min-height: 200px;
+  background-color: gray;
+  padding: 10px;
+  border-radius: 3px;
+}
+
+.app .settings textarea,
+.app input {
+  width: 100%;
+}
+
+.app form.crypt {
+  max-width: 90%;
+}
