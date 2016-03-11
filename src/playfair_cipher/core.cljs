@@ -11,7 +11,7 @@
 ;; app state
 
 (def default-key "1kjkjn")
-(def default-table-str "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+(def default-table-str "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZążśźłóćęńĄŻŚŹŁÓĆĘŃ,.; 0123456789")
 (def default-app-state {:encrypt ""
                         :decrypt ""
                         :key default-key
@@ -20,7 +20,8 @@
 (add-watch app-state :logger #(logger/debug :app-state %4))
 
 (defn reset-app-state [& args]
-  (reset! app-state default-app-state))
+  (reset! app-state (merge @app-state {:key default-key
+                                       :table-str default-table-str})))
 
 
 ;; ------------------------
