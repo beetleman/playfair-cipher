@@ -23,6 +23,15 @@
 (defn textarea [state label target]
   (input* state label target :textarea))
 
+(defn table-view [state]
+  [:div.table-wrapper
+   [:table.pure-table.pure-table-bordered
+    (into [:tbody]
+          (for [row (crypt/create-table-with-key
+                     (mapv char (:table-str @state))
+                     (:key @state))]
+            (into [:tr] (for [cell row]
+                          [:td cell]))))]])
 
 (defn crypt-view [state target title crypt-fn]
   [:div
@@ -48,7 +57,8 @@
     [input state "Key" :key]
     [textarea state "Chars used in table" :table-str]
     [:button.pure-button.pure-button-primary {:on-click #(reset-state-fn)}
-     "Reset settings"]]
+     "Reset settings"]
+    [table-view state]]
    [:div.pure-g
     [:div.pure-u-1-2
      [crypt-view state :encrypt "Encrypt" crypt/encrypt]]
