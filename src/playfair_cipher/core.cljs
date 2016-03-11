@@ -1,28 +1,39 @@
 (ns playfair-cipher.core
+  (:require-macros [reagent.ratom :refer [reaction]])
   (:require [reagent.core :as reagent :refer [atom]]))
 
 
 (def default-key "!JKBKU KBKK LLkhvbV")
 
-;; app state
 
-(def app-state (atom {:text "" :key ""}))
-(add-watch app-state :logger #(-> %4 clj->js js/console.debug))
+(defn logger [key x]
+  (-> {:key x} clj->js js/console.debug))
+
+;; app state
+(def decrypt-state (atom {:text "" :key default-key}))
+(add-watch decrypt-state :logger #(logger :decrypt %4))
+
+(def encrypt-state (atom {:text "" :key default-key}))
+(add-watch encrypt-state :logger #(logger :encrypt %4))
 
 ;; ------------------------
 ;; table
-(def utf-8-num (range 65535))
-(def utf-8-char (mapv char utf-8-num))
 
-(defn create-char-vector [table key]
-  (let [key (vec key)
+(def utf-8-chars (mapv char "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"))
+
+(defn create-char-vector [v key]
+  (let [key-v (vec key)
         key-set (set key)
-        table (filterv #((complement contains?) key-set %) table)]
-    (into key table)))
+        v (filterv #((complement contains?) key-set %) v)]
+    (into key-v v)))
 
 
 (defn create-table [v]
   (partition (-> (count v) Math/sqrt int) v))
+
+(defn create-table-with-key [v key]
+  (create-table (create-char-vector v key)))
+
 
 ;; ------------------------
 ;; Playfair Cipher
@@ -55,7 +66,8 @@
    splited-word))
 
 (defn positions->chars [table positions]
-  (map (fn [itm] (map #(get-in table %) itm))
+  (map (fn [itm] (map (fn [x]
+                        (nth (nth table (first x)) (second x))) itm))
        positions))
 
 (defn crypt-position* [max-idx position next-index-fn]
@@ -118,29 +130,42 @@
     (swap! state assoc target (-> event .-target .-value))))
 
 
-(defn input
-  ([state label target] (input state label target ""))
-  ([state label target value]
-   [:fieldset
-    [:label label ": "
-     [:input {:placeholder "Write text.."
-              :value value
-              :on-change (input-onchange-fn state target)}]]]))
+(defn input [state label target]
+  [:fieldset
+   [:label label ": "
+    [:input {:placeholder "Write text.."
+             :value (target @state)
+             :on-change (input-onchange-fn state target)}]]])
 
-
-(defn main-view [state]
-  [:div.app
+(defn crypt-view [state title crypt-fn]
+  [:div
    [:form.pure-form
-    [:h1 "Playfair Cipher"]
+    [:h2 title]
     [input state "Text" :text]
-    [input state "Key" :key default-key]]])
+    [input state "Key" :key]
+    [:lable "Result:"
+     [:pre.result
+      (crypt-fn (create-table-with-key utf-8-chars (:key @state))
+                (:text @state)
+                \f)]]]])
+
+
+(defn main-view [encrypt-state decrypt-state table]
+  [:div.app
+   [:div.header
+    [:h1 "Playfair Cipher"]]
+   [:div.pure-g
+    [:div.pure-u-1-2
+     [crypt-view encrypt-state "Encrypt" encrypt]]
+    [:div.pure-u-1-2
+     [crypt-view decrypt-state "Decrypt" decrypt]]]])
 
 
 ;; ------------------------
 ;; mounting app
 
 (defn mount-root []
-  (reagent/render [main-view app-state]
+  (reagent/render [main-view encrypt-state decrypt-state]
                   (.getElementById js/document "playfair-cipher")))
 
 (defn main []
