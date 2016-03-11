@@ -39,21 +39,32 @@
 
 (deftest split-word []
   (is (=
-       (core/split-word "1q2w3" "X")
-       [[\1 \q] [\2 \w] [\3 \X]])))
-
-(deftest get-char-position []
+       (core/split-word "X" "1q2w3")
+       [[\1 \q] [\2 \w] [\3 \X]]))
   (is (=
-       (core/get-char-position test-table \q)
+       (core/split-word "X" "1q2w")
+       [[\1 \q] [\2 \w]])))
+
+(deftest char->position []
+  (is (=
+       (core/char->position test-table \q)
        [1 0])))
 
-(deftest get-chars-positions []
+(deftest chars->positions []
   (is (=
-       (core/get-chars-positions test-table [[\1 \s] [\2 \x]])
+       (core/chars->positions test-table [[\1 \s] [\2 \x]])
        [[[0 0]
          [2 1]]
         [[0 1]
          [3 1]]])))
+
+(deftest positions->chars []
+  (is (=
+       (core/positions->chars test-table [[[0 0]
+                                           [2 1]]
+                                          [[0 1]
+                                           [3 1]]])
+       [[\1 \s] [\2 \x]])))
 
 (deftest encrypt-position []
   (is (=
@@ -75,3 +86,14 @@
          [2 0]]
         [[1 1]
          [0 1]]])))
+
+
+(deftest crypt-symetry []
+  (let [word "qwer"
+        fill-letter \f
+        word-encrypted (core/encrypt test-table word fill-letter)
+        word-decrypted (core/decrypt test-table word-encrypted fill-letter)
+        ]
+   (is (=
+        word-decrypted
+        word))))
