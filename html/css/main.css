@@ -14,9 +14,18 @@ body { -webkit-animation: androidBugfix infinite 1s; }
 }
 
 .app .result {
-  width: 80%;
+  width: 100%;
   min-height: 200px;
   background-color: gray;
   padding: 10px;
   border-radius: 3px;
+}
+
+.app .settings textarea,
+.app input {
+  width: 100%;
+}
+
+.app form.crypt {
+  max-width: 90%;
 }
