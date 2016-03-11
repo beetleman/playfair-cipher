@@ -13,19 +13,18 @@ body { -webkit-animation: androidBugfix infinite 1s; }
   text-align: center;
 }
 
-.app .result {
-  width: 100%;
-  min-height: 200px;
-  background-color: gray;
-  padding: 10px;
-  border-radius: 3px;
+.app textarea.result {
+  min-height: 100px;
+  color: black;
 }
 
-.app .settings textarea,
+.app textarea,
 .app input {
   width: 100%;
+  resize: vertical;
 }
 
 .app form.crypt {
-  max-width: 90%;
+  max-width: 100%;
+  padding: 5px;
 }

@@ -28,14 +28,15 @@
   [:div
    [:form.pure-form.crypt {:on-submit (fn [e] (.preventDefault e))}
     [:h2 title]
-    [input state "Text" target]
+    [textarea state "Text" target]
     [:lable "Result:"
-     [:pre.result
-      (crypt-fn (crypt/create-table-with-key
-                 (mapv char (:table-str @state))
-                 (:key @state))
-                (target @state)
-                \f)]]]])
+     [:textarea.result
+      {:value (crypt-fn (crypt/create-table-with-key
+                         (mapv char (:table-str @state))
+                         (:key @state))
+                        (target @state)
+                        \f)
+       :disabled true}]]]])
 
 
 (defn main-view [state reset-state-fn table]
