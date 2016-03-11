@@ -9,19 +9,19 @@
     (swap! state assoc target (-> event .-target .-value))))
 
 
-(defn input [state label target]
+
+(defn input* [state label target tag]
   [:fieldset
    [:label label ": "
-    [:input {:placeholder "Write text.."
+    [tag {:placeholder "Write text.."
              :value (target @state)
              :on-change (onchange-fn state target)}]]])
 
+(defn input [state label target]
+  (input* state label target :input))
+
 (defn textarea [state label target]
-  [:fieldset
-   [:label label ": "
-    [:textarea {:placeholder "Write text.."
-                :value (target @state)
-                :on-change (onchange-fn state target)}]]])
+  (input* state label target :textarea))
 
 
 (defn crypt-view [state target title crypt-fn]
