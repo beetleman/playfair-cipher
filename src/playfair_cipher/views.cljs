@@ -15,8 +15,8 @@
   [:fieldset
    [:label label ": "
     [tag {:placeholder "Write text.."
-             :value (target @state)
-             :on-change (onchange-fn state target)}]]])
+          :value (target @state)
+          :on-change (onchange-fn state target)}]]])
 
 (defn input [state label target]
   (input* state label target :input))
@@ -47,20 +47,20 @@
 
 (defn main-view [state reset-state-fn]
   (let [table (reaction (crypt/create-table-with-key
-                        (mapv char (:table-str @state))
-                        (:key @state)))]
-   [:div.app
-   [:div.header
-    [:h1 "Playfair Cipher"]]
-   [:form.pure-form.settings {:on-submit (fn [e] (.preventDefault e))}
-    [:h2 "Settings"]
-    [input state "Key" :key]
-    [textarea state "Chars used in table" :table-str]
-    [:button.pure-button.pure-button-primary {:on-click #(reset-state-fn)}
-     "Reset settings"]
-    [table-view table]]
-   [:div.pure-g
-    [:div.pure-u-1-2
-     [crypt-view state table :encrypt "Encrypt" crypt/encrypt]]
-    [:div.pure-u-1-2
-     [crypt-view state table :decrypt "Decrypt" crypt/decrypt]]]]))
+                         (mapv char (:table-str @state))
+                         (:key @state)))]
+    [:div.app
+     [:div.header
+      [:h1 "Playfair Cipher"]]
+     [:form.pure-form.settings {:on-submit (fn [e] (.preventDefault e))}
+      [:h2 "Settings"]
+      [input state "Key" :key]
+      [textarea state "Chars used in table" :table-str]
+      [:button.pure-button.pure-button-primary {:on-click #(reset-state-fn)}
+       "Reset settings"]
+      [table-view table]]
+     [:div.pure-g
+      [:div.pure-u-1-2
+       [crypt-view state table :encrypt "Encrypt" crypt/encrypt]]
+      [:div.pure-u-1-2
+       [crypt-view state table :decrypt "Decrypt" crypt/decrypt]]]]))
