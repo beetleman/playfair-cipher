@@ -37,11 +37,11 @@
 (defn index-of [coll x]
   (js->clj (.indexOf (clj->js coll) x)))
 
-(defn split-word [l word]
+(defn split-word [fill-letter word]
   "split `word' into pairs, if odd numer of letter ausing `l' character"
   (let [word (vec word)
         word (if (odd? (count word))
-               (conj word l)
+               (conj word fill-letter)
                word)]
     (partition 2 word)))
 

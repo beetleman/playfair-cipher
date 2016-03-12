@@ -41,7 +41,7 @@
      [:textarea.result
       {:value (crypt-fn @table
                         (target @state)
-                        (get-in @table [0 0]))
+                        (-> @state :key first))
        :disabled true}]]]])
 
 
