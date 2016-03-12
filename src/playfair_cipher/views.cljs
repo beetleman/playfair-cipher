@@ -1,4 +1,5 @@
 (ns playfair-cipher.views
+  (:require-macros [reagent.ratom :refer [reaction]])
   (:require [reagent.core :as reagent]
             [playfair-cipher.crypt :as crypt]))
 
@@ -23,33 +24,32 @@
 (defn textarea [state label target]
   (input* state label target :textarea))
 
-(defn table-view [state]
+(defn table-view [table]
   [:div.table-wrapper
    [:table.pure-table.pure-table-bordered
     (into [:tbody]
-          (for [row (crypt/create-table-with-key
-                     (mapv char (:table-str @state))
-                     (:key @state))]
+          (for [row @table]
             (into [:tr] (for [cell row]
                           [:td cell]))))]])
 
-(defn crypt-view [state target title crypt-fn]
+(defn crypt-view [state table target title crypt-fn]
   [:div
    [:form.pure-form.crypt {:on-submit (fn [e] (.preventDefault e))}
     [:h2 title]
     [textarea state "Text" target]
     [:lable "Result:"
      [:textarea.result
-      {:value (crypt-fn (crypt/create-table-with-key
-                         (mapv char (:table-str @state))
-                         (:key @state))
+      {:value (crypt-fn @table
                         (target @state)
-                        \f)
+                        (get-in @table [0 0]))
        :disabled true}]]]])
 
 
-(defn main-view [state reset-state-fn table]
-  [:div.app
+(defn main-view [state reset-state-fn]
+  (let [table (reaction (crypt/create-table-with-key
+                        (mapv char (:table-str @state))
+                        (:key @state)))]
+   [:div.app
    [:div.header
     [:h1 "Playfair Cipher"]]
    [:form.pure-form.settings {:on-submit (fn [e] (.preventDefault e))}
@@ -58,9 +58,9 @@
     [textarea state "Chars used in table" :table-str]
     [:button.pure-button.pure-button-primary {:on-click #(reset-state-fn)}
      "Reset settings"]
-    [table-view state]]
+    [table-view table]]
    [:div.pure-g
     [:div.pure-u-1-2
-     [crypt-view state :encrypt "Encrypt" crypt/encrypt]]
+     [crypt-view state table :encrypt "Encrypt" crypt/encrypt]]
     [:div.pure-u-1-2
-     [crypt-view state :decrypt "Decrypt" crypt/decrypt]]]])
+     [crypt-view state table :decrypt "Decrypt" crypt/decrypt]]]]))
