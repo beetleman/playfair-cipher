@@ -4,7 +4,7 @@ body { -webkit-animation: androidBugfix infinite 1s; }
 /* end workaround */
 
 .app {
-  width: 750px;
+  width: 760px;
   margin: auto;
 }
 

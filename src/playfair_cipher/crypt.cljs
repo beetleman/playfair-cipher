@@ -1,4 +1,5 @@
-(ns playfair-cipher.crypt)
+(ns playfair-cipher.crypt
+  (:require [playfair-cipher.logger :as logger]))
 
 ;; ------------------------
 ;; table
@@ -9,24 +10,38 @@
         v (filterv #((complement contains?) key-set %) v)]
     (into key-v v)))
 
+(defn length->size [l]
+  (let [f (fn [x]
+            (let [y (/ l x)]
+              [(integer? y) {:x x :y y}]))
+        max-y (-> l Math/sqrt int inc)]
+    (->>
+     (map f (range 1 max-y))
+     (filter first)
+     last
+     second)))
+
+(defn table-size [table]
+  {:x (count table)
+   :y (-> table first count)})
 
 (defn create-table [v]
-  (partition (-> (count v) Math/sqrt int) v))
+  (let [size (length->size (count v))]
+   (partition (:y size) v)))
 
 (defn create-table-with-key [v key]
   (create-table (create-char-vector v key)))
-
 
 ;; ------------------------
 ;; Playfair Cipher
 (defn index-of [coll x]
   (js->clj (.indexOf (clj->js coll) x)))
 
-(defn split-word [l word]
+(defn split-word [fill-letter word]
   "split `word' into pairs, if odd numer of letter ausing `l' character"
   (let [word (vec word)
         word (if (odd? (count word))
-               (conj word l)
+               (conj word fill-letter)
                word)]
     (partition 2 word)))
 
@@ -52,11 +67,11 @@
                         (nth (nth table (first x)) (second x))) itm))
        positions))
 
-(defn crypt-position* [max-idx position next-index-fn]
+(defn crypt-position* [size position next-index-fn]
   (let [[[l1-x l1-y] [l2-x l2-y]] position
-        allowed-idexies (cycle (range max-idx))
+        allowed-idexies (cycle (range (:y size)))
         next-index (fn [idx] (nth allowed-idexies
-                                  (+ max-idx (next-index-fn idx))))]
+                                  (+ (:y size) (next-index-fn idx))))]
     (cond
       (= l1-x l2-x)
       [[l1-x (next-index l1-y)]
@@ -68,16 +83,16 @@
       [[l1-x l2-y]
        [l2-x l1-y]])))
 
-(defn encrypt-position [max-idx position]
-  (crypt-position* max-idx position inc))
+(defn encrypt-position [size position]
+  (crypt-position* size position inc))
 
 
-(defn decrypt-position [max-idx position]
-  (crypt-position* max-idx position dec))
+(defn decrypt-position [size position]
+  (crypt-position* size position dec))
 
 
 (defn crypt-positions* [table positions conv-fn]
-  (map (partial conv-fn (-> table first count))
+  (map (partial conv-fn (table-size table))
        positions))
 
 (defn encrypt-positions [table positions]
