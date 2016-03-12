@@ -1,4 +1,5 @@
-(ns playfair-cipher.crypt)
+(ns playfair-cipher.crypt
+  (:require [playfair-cipher.logger :as logger]))
 
 ;; ------------------------
 ;; table
@@ -9,9 +10,21 @@
         v (filterv #((complement contains?) key-set %) v)]
     (into key-v v)))
 
+(defn length->size [l]
+  (let [f (fn [x]
+            (let [y (/ l x)]
+              [(integer? y) x y]))
+        max-y (-> l Math/sqrt int inc)]
+    (->>
+     (map f (range 1 max-y))
+     (filter first)
+     last
+     rest)))
+
 
 (defn create-table [v]
-  (partition (-> (count v) Math/sqrt int) v))
+  (let [[_ max-y] (length->size (count v))]
+   (partition max-y v)))
 
 (defn create-table-with-key [v key]
   (create-table (create-char-vector v key)))
@@ -77,7 +90,7 @@
 
 
 (defn crypt-positions* [table positions conv-fn]
-  (map (partial conv-fn (-> table first count))
+  (map (partial conv-fn (-> table count))
        positions))
 
 (defn encrypt-positions [table positions]

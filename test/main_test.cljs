@@ -8,8 +8,7 @@
   [\1 \2 \3 \4
    \q \w \e \r
    \a \s \d \f
-   \z \x \c \v
-   \0])
+   \z \x \c \v])
 
 (def test-table
   [[\1 \2 \3 \4]
@@ -27,11 +26,25 @@
        (crypt/create-char-vector [\x \a \g \1 \z] [\g \z])
        [\g \z \x \a \1])))
 
+(deftest length->size []
+  (is (=
+       (crypt/length->size 6)
+       [2 3]))
+  (is (=
+       (crypt/length->size 7)
+       [1 7]))
+  (is (=
+       (crypt/length->size 21)
+       [3 7])))
 
 (deftest create-table []
   (is (=
        (crypt/create-table test-vector)
-       test-table)))
+       test-table))
+  (is (=
+       (crypt/create-table [1 2 3 4 5 6])
+       [[1 2 3]
+        [4 5 6]])))
 
 (deftest index-of []
   (is (=
