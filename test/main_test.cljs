@@ -16,6 +16,8 @@
    [\a \s \d \f]
    [\z \x \c \v]])
 
+(def table-size
+  {:x 4 :y 4})
 
 (deftest test-pass []
   (is (= 2 2)))
@@ -29,13 +31,13 @@
 (deftest length->size []
   (is (=
        (crypt/length->size 6)
-       [2 3]))
+       {:x 2 :y 3}))
   (is (=
        (crypt/length->size 7)
-       [1 7]))
+       {:x 1 :y 7}))
   (is (=
        (crypt/length->size 21)
-       [3 7])))
+       {:x 3 :y 7})))
 
 (deftest create-table []
   (is (=
@@ -82,7 +84,7 @@
 
 (deftest encrypt-position []
   (is (=
-       (crypt/encrypt-position 4
+       (crypt/encrypt-position table-size
                               [[0 1]
                                [3 1]])
        [[1 1]
