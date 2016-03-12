@@ -10,7 +10,7 @@
 ;; ------------------------
 ;; app state
 
-(def default-key "1kjkjn")
+(def default-key "1kjXxg")
 (def default-table-str "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZążśźłóćęńĄŻŚŹŁÓĆĘŃ,.; 0123456789")
 (def default-app-state {:encrypt ""
                         :decrypt ""
