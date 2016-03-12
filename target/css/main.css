@@ -5,27 +5,36 @@ body { -webkit-animation: androidBugfix infinite 1s; }
 
 .app {
   width: 750px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: auto;
 }
 
 .app .header {
   text-align: center;
 }
 
-.app .result {
-  width: 100%;
-  min-height: 200px;
-  background-color: gray;
-  padding: 10px;
-  border-radius: 3px;
+.app textarea.result {
+  min-height: 100px;
+  color: black;
 }
 
-.app .settings textarea,
+.app textarea,
 .app input {
   width: 100%;
+  resize: vertical;
 }
 
 .app form.crypt {
-  max-width: 90%;
+  max-width: 100%;
+  padding: 5px;
+}
+
+.app .table-wrapper {
+  max-width: 100%;
+  max-height: 750px;
+  margin-top: 10px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+.app table {
+  margin: auto;
 }
