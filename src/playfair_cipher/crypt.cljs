@@ -94,8 +94,7 @@
        (chars->positions table)
        (crypt-fn table)
        (positions->chars table)
-       (join-word fill-letter))
-  )
+       (join-word fill-letter)))
 
 (defn encrypt [table word fill-letter]
   (crypt* table word fill-letter encrypt-positions))
