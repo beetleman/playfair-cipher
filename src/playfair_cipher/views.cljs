@@ -42,7 +42,7 @@
       {:value (crypt-fn @table
                         (target @state)
                         (-> @state :key first))
-       :disabled true}]]]])
+       :readonly true}]]]])
 
 
 (defn main-view [state reset-state-fn]
